@@ -1,4 +1,5 @@
 ﻿using Gym.Core.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -9,7 +10,7 @@ namespace Gym.Data.Data
 {
 
     //Add-Migration Init -OutPutDir "Data/Migrations"
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityRole, string>
     {
         public DbSet<GymClass> GymClasses { get; set; }
 
