@@ -35,11 +35,19 @@ namespace Gym.Web
 
             services.AddDatabaseDeveloperPageExceptionFilter();
 
-            services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
-                .AddRoles<IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            services.AddDefaultIdentity<ApplicationUser>(options =>
+            {
+                options.SignIn.RequireConfirmedAccount = false;
+                options.Password.RequireDigit = false;
 
-            services.AddControllersWithViews();
+            })
+               .AddRoles<IdentityRole>()
+               .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            services.AddControllersWithViews(config => 
+            { 
+            
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
