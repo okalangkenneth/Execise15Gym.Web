@@ -60,7 +60,7 @@ namespace Gym.Data.Data
 
                 var admin = new ApplicationUser
                 {
-                    UserName = adminEmail,
+                    UserName = "Admin",
                     Email = adminEmail,
                 };
 
@@ -68,7 +68,7 @@ namespace Gym.Data.Data
 
                 if (!addAdminResult.Succeeded) throw new Exception(string.Join("\n", addAdminResult.Errors));
 
-                var adminUser = await userManager.FindByNameAsync(adminEmail);
+                var adminUser = await userManager.FindByEmailAsync(adminEmail);
 
                 foreach (var role in roleNames)
                 {

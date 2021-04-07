@@ -38,7 +38,7 @@ namespace Gym.Web
             services.AddDefaultIdentity<ApplicationUser>(options =>
             {
                 options.SignIn.RequireConfirmedAccount = false;
-                options.Password.RequireDigit = false;
+                //options.Password.RequireDigit = false;
 
             })
                .AddRoles<IdentityRole>()
@@ -46,7 +46,7 @@ namespace Gym.Web
 
             services.AddControllersWithViews(config => 
             { 
-            
+                    //config.Filters.Add()
             });
         }
 
