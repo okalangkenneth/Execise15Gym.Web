@@ -9,6 +9,7 @@ using Gym.Core.Entities;
 using Gym.Data.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Gym.Web.Extensions;
 
 namespace Gym.Web.Controllers
 {
@@ -88,7 +89,7 @@ namespace Gym.Web.Controllers
         // GET: GymClasses/Create
         public IActionResult Create()
         {
-            return View();
+            return Request.IsAjax() ? PartialView("CreatePartial") : View();
         }
 
         // POST: GymClasses/Create
@@ -102,9 +103,20 @@ namespace Gym.Web.Controllers
             {
                 db.Add(gymClass);
                 await db.SaveChangesAsync();
+
+                if (Request.IsAjax())
+                {
+                    return PartialView("GymClassPartial", gymClass);
+                }
+
                 return RedirectToAction(nameof(Index));
             }
             return View(gymClass);
+        }
+
+        public ActionResult Fetch()
+        {
+            return PartialView("CreatePartial");
         }
 
         // GET: GymClasses/Edit/5
