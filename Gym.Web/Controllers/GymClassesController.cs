@@ -10,6 +10,8 @@ using Gym.Data.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Gym.Web.Extensions;
+using Gym.Core.ViewModels;
+using AutoMapper;
 
 namespace Gym.Web.Controllers
 {
@@ -18,21 +20,58 @@ namespace Gym.Web.Controllers
     {
         private readonly ApplicationDbContext db;
         private readonly UserManager<ApplicationUser> usermanager;
+        private readonly IMapper mapper;
 
-        public GymClassesController(ApplicationDbContext context, UserManager<ApplicationUser> usermanager)
+        public GymClassesController(ApplicationDbContext context, UserManager<ApplicationUser> usermanager, IMapper mapper)
         {
             db = context;
             this.usermanager = usermanager;
+            this.mapper = mapper;
         }
 
         // GET: GymClasses
-       // [Authorize(Roles = "Member")]
-       [AllowAnonymous]
+        // [Authorize(Roles = "Member")]
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
-            //var userId = 
+            if (!User.Identity.IsAuthenticated)
+            {
+               
+                var model1 = new IndexViewModel
+                {
+                    GymClasses = await db.GymClasses.Include(g => g.AttendingMembers)
+                                    .Select(g => new GymClassesViewModel
+                                    {
+                                        Id = g.Id,
+                                        Name = g.Name,
+                                        Duration = g.Duration,
+                                        // Attending = g.AttendingMembers.Any(a => a.ApplicationUserId == userId)
+                                    })
+                                    .ToListAsync()
+                };
 
-            return View(await db.GymClasses.ToListAsync());
+               return View(model1);
+
+            }
+
+
+            var userId = usermanager.GetUserId(User);
+           // var m = mapper.Map<IEnumerable<GymClassesViewModel>>(db.GymClasses, opt => opt.Items.Add("Id", userId));
+            var model = new IndexViewModel
+            {
+                GymClasses = await db.GymClasses.Include(g => g.AttendingMembers)
+                                    .Select(g => new GymClassesViewModel
+                                    {
+                                        Id = g.Id,
+                                        Name = g.Name,
+                                        Duration = g.Duration,
+                                        Attending = g.AttendingMembers.Any(a => a.ApplicationUserId == userId)
+                                    })
+                                    .ToListAsync()
+            };
+
+       
+            return View(model);
         }
 
         public async Task<IActionResult> BookingToggle(int? id)
@@ -40,10 +79,9 @@ namespace Gym.Web.Controllers
             if (id is null) return BadRequest();
 
             var userId = usermanager.GetUserId(User);
+            ApplicationUserGymClass attending = await Find(id, userId);
 
-            var attending = await db.ApplicationUserGyms.FindAsync(userId, id);
-
-            if(attending is null)
+            if (attending is null)
             {
                 var booking = new ApplicationUserGymClass
                 {
@@ -62,6 +100,11 @@ namespace Gym.Web.Controllers
 
             return RedirectToAction(nameof(Index));
 
+        }
+
+        private async Task<ApplicationUserGymClass> Find(int? id, string userId)
+        {
+            return await db.ApplicationUserGyms.FindAsync(userId, id);
         }
 
         public async Task<IActionResult> Bookings()
