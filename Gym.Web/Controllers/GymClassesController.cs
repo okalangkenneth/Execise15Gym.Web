@@ -37,12 +37,6 @@ namespace Gym.Web.Controllers
 
             var userId = usermanager.GetUserId(User);
 
-            //var currentGymClass = await db.GymClasses.Include(g => g.AttendingMembers)
-            //        .FirstOrDefaultAsync(a => a.Id == id);
-
-            //var attending = currentGymClass?.AttendingMembers
-            //                    .FirstOrDefault(a => a.ApplicationUserId == userId);
-
             var attending = await db.ApplicationUserGyms.FindAsync(userId, id);
 
             if(attending is null)
@@ -66,7 +60,17 @@ namespace Gym.Web.Controllers
 
         }
 
+        public async Task<IActionResult> Bookings()
+        {
+            var userId = usermanager.GetUserId(User);
 
+            var model = db.ApplicationUserGyms
+                            .IgnoreQueryFilters()
+                            .Where(u => u.ApplicationUserId == userId)
+                            .Select(a => a.GymClass);
+
+            return View(nameof(Index), await model.ToListAsync());
+        }
 
         // GET: GymClasses/Details/5
         public async Task<IActionResult> Details(int? id)
