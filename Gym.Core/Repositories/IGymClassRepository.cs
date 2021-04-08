@@ -14,5 +14,6 @@ namespace Gym.Core.Repositories
         Task<IEnumerable<GymClass>> GetWithBookingsAsync();
         void Remove(GymClass gymClass);
         void Update(GymClass gymClass);
+        Task<GymClass> FindAsync(int? id);
     }
 }

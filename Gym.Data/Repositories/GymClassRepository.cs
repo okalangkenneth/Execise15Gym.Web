@@ -62,5 +62,9 @@ namespace Gym.Data.Repositories
             return db.GymClasses.Any(g => g.Id == id);
         }
 
+        public async Task<GymClass> FindAsync(int? id)
+        {
+            return await db.GymClasses.FindAsync(id);
+        }
     }
 }
