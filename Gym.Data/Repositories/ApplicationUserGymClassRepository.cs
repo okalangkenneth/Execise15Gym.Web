@@ -1,4 +1,5 @@
 ﻿using Gym.Core.Entities;
+using Gym.Core.Repositories;
 using Gym.Data.Data;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Gym.Data.Repositories
 {
-    public class ApplicationUserGymClassRepository
+    public class ApplicationUserGymClassRepository : IApplicationUserGymClassRepository
     {
         private readonly ApplicationDbContext db;
 
@@ -18,7 +19,7 @@ namespace Gym.Data.Repositories
             this.db = db;
         }
 
-   
+
         public async Task<ApplicationUserGymClass> GetAttending(int? id, string userId)
         {
             return await db.ApplicationUserGyms.FindAsync(userId, id);

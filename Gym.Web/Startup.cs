@@ -1,6 +1,8 @@
 
 using Gym.Core.Entities;
+using Gym.Core.Repositories;
 using Gym.Data.Data;
+using Gym.Data.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -64,6 +66,8 @@ namespace Gym.Web
             //})
 
             services.AddAutoMapper(typeof(MapperProfile));
+
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

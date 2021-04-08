@@ -13,25 +13,22 @@ using Gym.Web.Extensions;
 using Gym.Core.ViewModels;
 using AutoMapper;
 using Gym.Data.Repositories;
+using Gym.Core.Repositories;
 
 namespace Gym.Web.Controllers
 {
     //[Authorize(Roles = "Member")]
     public class GymClassesController : Controller
     {
-        private readonly ApplicationDbContext db;
-        private readonly ApplicationUserGymClassRepository applicationUserGymClassRepository;
-        private GymClassRepository gymClassRepository;
         private readonly UserManager<ApplicationUser> usermanager;
         private readonly IMapper mapper;
+        private readonly IUnitOfWork uow;
 
-        public GymClassesController(ApplicationDbContext context, UserManager<ApplicationUser> usermanager, IMapper mapper)
+        public GymClassesController(UserManager<ApplicationUser> usermanager, IMapper mapper, IUnitOfWork uow)
         {
-            db = context;
-            applicationUserGymClassRepository = new ApplicationUserGymClassRepository(context);
-            gymClassRepository = new GymClassRepository(context);
             this.usermanager = usermanager;
             this.mapper = mapper;
+            this.uow = uow;
         }
 
         // GET: GymClasses
@@ -84,7 +81,7 @@ namespace Gym.Web.Controllers
             if (id is null) return BadRequest();
 
             var userId = usermanager.GetUserId(User);
-            ApplicationUserGymClass attending = await applicationUserGymClassRepository.GetAttending(id, userId);
+            ApplicationUserGymClass attending = await uow.AppUserRepo.GetAttending(id, userId);
 
             if (attending is null)
             {
@@ -94,11 +91,11 @@ namespace Gym.Web.Controllers
                     GymClassId = (int)id
                 };
 
-                db.ApplicationUserGyms.Add(booking);
+                uow.AppUserRepo.Add(booking);
             }
             else
             {
-                db.ApplicationUserGyms.Remove(attending);
+                uow.AppUserRepo.Remove(attending);
             }
 
             await db.SaveChangesAsync();
