@@ -13,6 +13,7 @@ using Gym.Web.Extensions;
 
 namespace Gym.Web.Controllers
 {
+    //[Authorize(Roles = "Member")]
     public class GymClassesController : Controller
     {
         private readonly ApplicationDbContext db;
@@ -26,8 +27,11 @@ namespace Gym.Web.Controllers
 
         // GET: GymClasses
        // [Authorize(Roles = "Member")]
+       [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
+            //var userId = 
+
             return View(await db.GymClasses.ToListAsync());
         }
 
@@ -118,6 +122,8 @@ namespace Gym.Web.Controllers
             return View(gymClass);
         }
 
+      //ToDo: Fix!
+      //  [IsAjax]
         public ActionResult Fetch()
         {
             return PartialView("CreatePartial");
