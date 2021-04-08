@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Identity;
 using Gym.Web.Extensions;
 using Gym.Core.ViewModels;
 using AutoMapper;
+using Gym.Data.Repositories;
 
 namespace Gym.Web.Controllers
 {
@@ -19,12 +20,16 @@ namespace Gym.Web.Controllers
     public class GymClassesController : Controller
     {
         private readonly ApplicationDbContext db;
+        private readonly ApplicationUserGymClassRepository applicationUserGymClassRepository;
+        private GymClassRepository gymClassRepository;
         private readonly UserManager<ApplicationUser> usermanager;
         private readonly IMapper mapper;
 
         public GymClassesController(ApplicationDbContext context, UserManager<ApplicationUser> usermanager, IMapper mapper)
         {
             db = context;
+            applicationUserGymClassRepository = new ApplicationUserGymClassRepository(context);
+            gymClassRepository = new GymClassRepository(context);
             this.usermanager = usermanager;
             this.mapper = mapper;
         }
@@ -79,7 +84,7 @@ namespace Gym.Web.Controllers
             if (id is null) return BadRequest();
 
             var userId = usermanager.GetUserId(User);
-            ApplicationUserGymClass attending = await Find(id, userId);
+            ApplicationUserGymClass attending = await applicationUserGymClassRepository.GetAttending(id, userId);
 
             if (attending is null)
             {
@@ -102,10 +107,7 @@ namespace Gym.Web.Controllers
 
         }
 
-        private async Task<ApplicationUserGymClass> Find(int? id, string userId)
-        {
-            return await db.ApplicationUserGyms.FindAsync(userId, id);
-        }
+      
 
         public async Task<IActionResult> Bookings()
         {
