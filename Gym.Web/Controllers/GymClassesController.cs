@@ -57,21 +57,6 @@ namespace Gym.Web.Controllers
 
             }
 
-
-            //var model = new IndexViewModel
-            //{
-            //    GymClasses = await db.GymClasses.Include(g => g.AttendingMembers)
-            //                        .Select(g => new GymClassesViewModel
-            //                        {
-            //                            Id = g.Id,
-            //                            Name = g.Name,
-            //                            Duration = g.Duration,
-            //                            Attending = g.AttendingMembers.Any(a => a.ApplicationUserId == userId)
-            //                        })
-            //                        .ToListAsync()
-            //};
-
-
             return View(model);
         }
 

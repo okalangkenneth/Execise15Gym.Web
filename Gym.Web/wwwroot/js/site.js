@@ -46,3 +46,7 @@ function removeForm() {
 function fail() {
     console.log('fail');
 }
+
+$('#checkbox').click(function () {
+    $('form').submit();
+})
