@@ -14,6 +14,7 @@ using Gym.Core.ViewModels;
 using AutoMapper;
 using Gym.Data.Repositories;
 using Gym.Core.Repositories;
+using Gym.Web.Filters;
 
 namespace Gym.Web.Controllers
 {
@@ -102,8 +103,6 @@ namespace Gym.Web.Controllers
 
         }
 
-
-
         public async Task<IActionResult> Bookings()
         {
             var userId = usermanager.GetUserId(User);
@@ -114,18 +113,10 @@ namespace Gym.Web.Controllers
         }
 
         // GET: GymClasses/Details/5
+        [RequiredIdRequiredModel("Id")]
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
             var gymClass = await uow.GymClassRepository.GetAsync(id);
-            if (gymClass == null)
-            {
-                return NotFound();
-            }
 
             return View(gymClass);
         }
