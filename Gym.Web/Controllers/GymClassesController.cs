@@ -39,8 +39,7 @@ namespace Gym.Web.Controllers
         {
             var model = new IndexViewModel();
             var userId = usermanager.GetUserId(User);
-
-
+            
             if (!User.Identity.IsAuthenticated)
             {
                  model = mapper.Map<IndexViewModel>(await uow.GymClassRepository.GetAllAsync());

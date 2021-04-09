@@ -58,13 +58,6 @@ namespace Gym.Web
                 config.Filters.Add(new AuthorizeFilter(policy));
             });
 
-            //services.AddAuthorization(opt =>
-            //{
-            //    opt.FallbackPolicy = new AuthorizationPolicyProvider()
-            //                            .
-                                        
-            //})
-
             services.AddAutoMapper(typeof(MapperProfile));
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
