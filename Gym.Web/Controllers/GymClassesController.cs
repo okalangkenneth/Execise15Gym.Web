@@ -36,25 +36,25 @@ namespace Gym.Web.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
-            if (!User.Identity.IsAuthenticated)
-            {
+            //if (!User.Identity.IsAuthenticated)
+            //{
                
-                var model1 = new IndexViewModel
-                {
-                    GymClasses =  uow.GymClassRepository.GetWithBookingsAsync().Result
-                                    .Select(g => new GymClassesViewModel
-                                    {
-                                        Id = g.Id,
-                                        Name = g.Name,
-                                        Duration = g.Duration,
-                                        // Attending = g.AttendingMembers.Any(a => a.ApplicationUserId == userId)
-                                    })
-                                   // .ToListAsync()
-                };
+            //    var model1 = new IndexViewModel
+            //    {
+            //        GymClasses =  uow.GymClassRepository.GetWithBookingsAsync().Result
+            //                        .Select(g => new GymClassesViewModel
+            //                        {
+            //                            Id = g.Id,
+            //                            Name = g.Name,
+            //                            Duration = g.Duration,
+            //                            // Attending = g.AttendingMembers.Any(a => a.ApplicationUserId == userId)
+            //                        })
+            //                       // .ToListAsync()
+            //    };
 
-               return View(model1);
+            //   return View(model1);
 
-            }
+            //}
 
 
             var userId = usermanager.GetUserId(User);
