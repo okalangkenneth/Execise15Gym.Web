@@ -39,9 +39,10 @@ namespace Gym.Data.Repositories
         public async Task<IEnumerable<GymClass>> GetHistoryAsync()
         {
             return await db.GymClasses
+                        .Include(g => g.AttendingMembers)
                         .IgnoreQueryFilters()
                         .Where(g => g.StartDate < DateTime.Now).ToListAsync();
-        }
+        }  
 
         public void Add(GymClass gymClass)
         {

@@ -34,31 +34,29 @@ namespace Gym.Web.Controllers
         // GET: GymClasses
         // [Authorize(Roles = "Member")]
         [AllowAnonymous]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(IndexViewModel viewModel = null)
         {
-            //if (!User.Identity.IsAuthenticated)
-            //{
-               
-            //    var model1 = new IndexViewModel
-            //    {
-            //        GymClasses =  uow.GymClassRepository.GetWithBookingsAsync().Result
-            //                        .Select(g => new GymClassesViewModel
-            //                        {
-            //                            Id = g.Id,
-            //                            Name = g.Name,
-            //                            Duration = g.Duration,
-            //                            // Attending = g.AttendingMembers.Any(a => a.ApplicationUserId == userId)
-            //                        })
-            //                       // .ToListAsync()
-            //    };
-
-            //   return View(model1);
-
-            //}
-
-
+            var model = new IndexViewModel();
             var userId = usermanager.GetUserId(User);
-             var m = mapper.Map<IndexViewModel>(await uow.GymClassRepository.GetWithBookingsAsync(), opt => opt.Items.Add("Id", userId));
+
+
+            if (!User.Identity.IsAuthenticated)
+            {
+                 model = mapper.Map<IndexViewModel>(await uow.GymClassRepository.GetAllAsync());
+            }
+
+            if (viewModel.ShowHistory)
+            {
+                model = mapper.Map<IndexViewModel>(await uow.GymClassRepository.GetHistoryAsync(), opt => opt.Items.Add("Id", userId));
+            }
+
+            if(User.Identity.IsAuthenticated && !viewModel.ShowHistory)
+            {
+             model = mapper.Map<IndexViewModel>(await uow.GymClassRepository.GetWithBookingsAsync(), opt => opt.Items.Add("Id", userId));
+
+            }
+
+
             //var model = new IndexViewModel
             //{
             //    GymClasses = await db.GymClasses.Include(g => g.AttendingMembers)
@@ -72,8 +70,8 @@ namespace Gym.Web.Controllers
             //                        .ToListAsync()
             //};
 
-       
-            return View(m);
+
+            return View(model);
         }
 
         public async Task<IActionResult> BookingToggle(int? id)
@@ -104,13 +102,13 @@ namespace Gym.Web.Controllers
 
         }
 
-      
+
 
         public async Task<IActionResult> Bookings()
         {
             var userId = usermanager.GetUserId(User);
 
-            var model = await uow.GymClassRepository.GetHistoryAsync();
+            var model = mapper.Map<IndexViewModel>(await uow.AppUserRepo.GetBookingsAsync(userId), opt => opt.Items.Add("Id", userId));
 
             return View(nameof(Index), model);
         }
@@ -160,8 +158,8 @@ namespace Gym.Web.Controllers
             return View(gymClass);
         }
 
-      //ToDo: Fix!
-      //  [IsAjax]
+        //ToDo: Fix!
+        //  [IsAjax]
         public ActionResult Fetch()
         {
             return PartialView("CreatePartial");
@@ -216,8 +214,8 @@ namespace Gym.Web.Controllers
                 return RedirectToAction(nameof(Index));
             }
             return View(gymClass);
-        } 
-        
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> NewEdit(int? id)
@@ -228,7 +226,7 @@ namespace Gym.Web.Controllers
 
             var gymClass = await uow.GymClassRepository.FindAsync(id);
 
-            if(await TryUpdateModelAsync(gymClass, "", g => g.Name, g => g.Duration))
+            if (await TryUpdateModelAsync(gymClass, "", g => g.Name, g => g.Duration))
 
                 try
                 {
@@ -246,8 +244,8 @@ namespace Gym.Web.Controllers
                         throw;
                     }
                 }
-              //  return RedirectToAction(nameof(Index));
-            
+            //  return RedirectToAction(nameof(Index));
+
             return View(gymClass);
         }
 

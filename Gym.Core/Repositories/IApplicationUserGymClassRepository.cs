@@ -8,7 +8,7 @@ namespace Gym.Core.Repositories
     {
         void Add(ApplicationUserGymClass attending);
         Task<ApplicationUserGymClass> GetAttending(int? id, string userId);
-        Task<IEnumerable<ApplicationUserGymClass>> GetBookingsAsync(string userId);
+        Task<IEnumerable<GymClass>> GetBookingsAsync(string userId);
         void Remove(ApplicationUserGymClass attending);
     }
 }
